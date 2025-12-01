@@ -1,9 +1,9 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/server';
+import vercel from '@astrojs/vercel';
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',      // dùng server mode cho Vercel
-  adapter: vercel(),     // adapter Vercel
-  // site: 'https://astro-demo-xxxxx.vercel.app', // có cũng được, chưa bắt buộc
+  output: 'server',    // cho phép SSR trên Vercel
+  adapter: vercel(),   // dùng adapter Vercel
+  // … nếu bạn có thêm cấu hình khác (integrations, etc.) thì giữ nguyên ở dưới
 });
