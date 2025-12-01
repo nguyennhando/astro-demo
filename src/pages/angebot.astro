@@ -1,0 +1,199 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Angebote – Restaurant Sonnengarten">
+  <section class="hero card">
+    <span class="badge">Aktuelle Highlights</span>
+    <h1>Unsere Angebote im Sonnengarten</h1>
+    <p class="intro">
+      Entdecken Sie unsere saisonalen Spezialitäten, Mittagsangebote und Aktionen – frisch
+      zubereitet mit regionalen Zutaten.
+    </p>
+
+    <div class="hero-grid">
+      <div class="hero-box">
+        <h2>Mittagsmenü</h2>
+        <p>
+          Montag bis Freitag von <strong>11:30–14:30 Uhr</strong> bieten wir ein wechselndes
+          Mittagsmenü inklusive Beilage.
+        </p>
+        <p class="price-hint">ab 9,90 € pro Person</p>
+      </div>
+      <div class="hero-box highlight">
+        <h2>Saisonkarte</h2>
+        <p>
+          Aktuell im Fokus: <strong>Spargel &amp; frische Kräuter</strong>. Leichte, kreative
+          Gerichte perfekt für die warme Jahreszeit.
+        </p>
+        <ul>
+          <li>Spargelragout mit Kartoffeln &amp; Kräuterdip</li>
+          <li>Gebratenes Fischfilet mit Zitronenbutter</li>
+          <li>Hausgemachtes Dessert im Glas</li>
+        </ul>
+      </div>
+      <div class="hero-box">
+        <h2>Wochenend-Special</h2>
+        <p>
+          Jeden <strong>Freitag &amp; Samstag Abend</strong>: 3-Gänge-Menü zum Vorteilspreis – ideal
+          für den Abend zu zweit oder mit Freunden.
+        </p>
+        <p class="price-hint">3 Gänge ab 29,90 €</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/reservierung" class="btn-primary">Tisch für das Menü reservieren</a>
+      <a href="/speisekarte" class="btn-outline">Alle Gerichte ansehen</a>
+    </div>
+  </section>
+
+  <section class="section card">
+    <h2>Warum sich unsere Angebote lohnen</h2>
+    <div class="reasons">
+      <div>
+        <h3>Frische &amp; Regionalität</h3>
+        <p>
+          Wir arbeiten mit ausgewählten Lieferanten aus der Region und passen unsere Angebote an
+          die aktuelle Saison an.
+        </p>
+      </div>
+      <div>
+        <h3>Fairer Preis</h3>
+        <p>
+          Durch feste Angebotsmenüs können wir hochwertige Zutaten zu einem attraktiven Preis
+          anbieten.
+        </p>
+      </div>
+      <div>
+        <h3>Abwechslung</h3>
+        <p>
+          Unsere Karte ändert sich regelmäßig – so entdecken Sie bei jedem Besuch neue Gerichte.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section card newsletter">
+    <div class="newsletter-text">
+      <h2>Nichts mehr verpassen</h2>
+      <p>
+        Tragen Sie sich in unseren kleinen Newsletter ein und erhalten Sie Infos zu neuen
+        Angeboten, saisonalen Aktionen und besonderen Abenden.
+      </p>
+    </div>
+    <form class="newsletter-form">
+      <label>
+        E-Mail-Adresse
+        <input type="email" name="email" placeholder="ihre.adresse@example.com" required />
+      </label>
+      <button type="submit">Angebote per E-Mail erhalten</button>
+      <p class="hint">
+        Keine Sorge, wir verschicken nur gelegentlich E-Mails – kein Spam.
+      </p>
+    </form>
+  </section>
+
+  <style>
+    .hero h1 {
+      margin-top: 0.4rem;
+      font-size: 2.1rem;
+      line-height: 1.15;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #f59e0b15;
+      color: #f59e0b;
+      border: 1px solid #f59e0b40;
+    }
+
+    .intro {
+      margin-top: 0.7rem;
+      color: #4b5563;
+      max-width: 42rem;
+    }
+
+    .hero-grid {
+      margin-top: 1.6rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-box {
+      border-radius: 0.9rem;
+      padding: 1rem 1.1rem;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .hero-box h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-box p {
+      margin: 0.2rem 0 0.4rem;
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+
+    .hero-box ul {
+      margin: 0.3rem 0 0;
+      padding-left: 1.1rem;
+      color: #4b5563;
+      font-size: 0.9rem;
+    }
+
+    .hero-box li + li {
+      margin-top: 0.15rem;
+    }
+
+    .hero-box.highlight {
+      background: radial-gradient(circle at top left, #fef3c7, #fefce8);
+      border-color: #facc15;
+    }
+
+    .price-hint {
+      font-weight: 600;
+      color: #111827;
+      font-size: 0.95rem;
+    }
+
+    .actions {
+      margin-top: 1.8rem;
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary,
+    .btn-outline {
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #f9fafb;
+    }
+
+    .btn-outline {
+      border: 1px solid #2563eb;
+      color: #2563eb;
+      background: transparent;
+    }
+
+    .section {
+      margin-top: 1.6rem;
+    }

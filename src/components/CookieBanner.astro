@@ -1,0 +1,258 @@
+---
+const STORAGE_KEY = "cookieConsent";
+---
+
+<div id="cookie-backdrop" class="cookie-backdrop">
+  <div class="cookie-panel">
+    <div class="cookie-header">
+      <div class="cookie-icon">🍪</div>
+      <div>
+        <h2>Cookie-Einstellungen</h2>
+        <p>
+          Wir verwenden Cookies, die für den technischen Betrieb dieser Website notwendig sind.
+          Optionale Cookies setzen wir nur, wenn Sie zustimmen.
+        </p>
+      </div>
+    </div>
+
+    <div class="cookie-body">
+      <div class="cookie-group">
+        <div>
+          <strong>Notwendige Cookies</strong>
+          <p>Erforderlich, um die Seite sicher und funktionsfähig bereitzustellen.</p>
+        </div>
+        <span class="chip chip-on">immer aktiv</span>
+      </div>
+
+      <div class="cookie-group disabled">
+        <div>
+          <strong>Statistik &amp; Komfort</strong>
+          <p>Für anonymisierte Auswertung und verbesserte Nutzungserfahrung.</p>
+        </div>
+        <span class="chip">aktuell deaktiviert</span>
+      </div>
+
+      <p class="cookie-note">
+        Details finden Sie in unserer
+        <a href="/datenschutz">Datenschutzerklärung</a>.
+      </p>
+    </div>
+
+    <div class="cookie-actions">
+      <button id="cookie-only-necessary" class="btn ghost">
+        Nur notwendige Cookies
+      </button>
+      <button id="cookie-accept-all" class="btn primary">
+        Alle akzeptieren
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-backdrop {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at bottom, rgba(0, 0, 0, 0.75), transparent);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .cookie-panel {
+    width: 100%;
+    max-width: 520px;
+    background: linear-gradient(135deg, #020617, #020617f2);
+    border-radius: 1.1rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow:
+      0 18px 45px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(15, 23, 42, 0.9);
+    padding: 1.2rem 1.3rem 1.1rem;
+    color: #e5e7eb;
+    transform: translateY(16px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    backdrop-filter: blur(18px);
+  }
+
+  .cookie-backdrop.visible {
+    display: flex;
+  }
+
+  .cookie-backdrop.visible .cookie-panel {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .cookie-header {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+  }
+
+  .cookie-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 20%, #facc15, #b45309);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(234, 179, 8, 0.55);
+    font-size: 1.3rem;
+  }
+
+  .cookie-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #f9fafb;
+  }
+
+  .cookie-header p {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: #cbd5f5;
+  }
+
+  .cookie-body {
+    margin-top: 0.9rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.35);
+    padding-top: 0.8rem;
+  }
+
+  .cookie-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .cookie-group p {
+    margin: 0.1rem 0 0;
+    font-size: 0.86rem;
+    color: #94a3b8;
+  }
+
+  .cookie-group.disabled {
+    opacity: 0.6;
+  }
+
+  .chip {
+    align-self: flex-start;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    color: #cbd5f5;
+    white-space: nowrap;
+  }
+
+  .chip-on {
+    border-color: #22c55e;
+    color: #bbf7d0;
+    background: rgba(34, 197, 94, 0.08);
+  }
+
+  .cookie-note {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+
+  .cookie-note a {
+    color: #60a5fa;
+    text-decoration: underline;
+  }
+
+  .cookie-actions {
+    margin-top: 0.9rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .btn.primary {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #052e16;
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.5);
+  }
+
+  .btn.primary:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+  }
+
+  .btn.ghost {
+    background: transparent;
+    border: 1px solid rgba(148, 163, 184, 0.8);
+    color: #e5e7eb;
+  }
+
+  .btn.ghost:hover {
+    background: rgba(148, 163, 184, 0.1);
+  }
+
+  @media (max-width: 600px) {
+    .cookie-panel {
+      padding: 1rem 1rem 0.9rem;
+    }
+    .cookie-header {
+      align-items: center;
+    }
+    .cookie-header h2 {
+      font-size: 1rem;
+    }
+    .cookie-header p {
+      font-size: 0.84rem;
+    }
+    .cookie-actions {
+      justify-content: stretch;
+    }
+    .btn {
+      flex: 1 1 auto;
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  const KEY = "cookieConsent";
+  const backdrop = document.getElementById("cookie-backdrop");
+  const acceptAll = document.getElementById("cookie-accept-all");
+  const onlyNecessary = document.getElementById("cookie-only-necessary");
+
+  if (!backdrop) return;
+
+  const existing = localStorage.getItem(KEY);
+  if (!existing) {
+    backdrop.classList.add("visible");
+  }
+
+  function hide(choice) {
+    localStorage.setItem(KEY, choice);
+    backdrop.classList.remove("visible");
+  }
+
+  acceptAll?.addEventListener("click", () => hide("all"));
+  onlyNecessary?.addEventListener("click", () => hide("necessary"));
+})();
+</script>

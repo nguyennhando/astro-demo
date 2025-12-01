@@ -1,0 +1,239 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Checkout – Ihre Bestellung">
+  <div class="checkout-page">
+    <div class="checkout-wrapper">
+      <!-- CART SUMMARY -->
+      <section class="checkout-card">
+        <!-- NÚT XÓA NẰM NGANG CÙNG "WARENKORB" -->
+        <div class="checkout-header">
+          <h2>Warenkorb</h2>
+          <button type="button" id="clear-cart" class="clear-cart-inline-btn">
+            Alles löschen
+          </button>
+        </div>
+        <p class="sub">Ihre ausgewählten Gerichte</p>
+        <ul id="checkout-items" class="checkout-list"></ul>
+        <div class="checkout-total">
+          <span>Gesamt</span>
+          <span id="checkout-sum">0,00 €</span>
+        </div>
+      </section>
+
+      <!-- BESTELLDATEN -->
+      <section class="checkout-card">
+        <h2>Bestelldaten</h2>
+        <form id="order-form" class="order-form">
+          <div class="form-group">
+            <label for="name">Name *</label>
+            <input id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Telefon *</label>
+            <input id="phone" name="phone" required />
+          </div>
+          <div class="form-group">
+            <label for="email">E-Mail (optional)</label>
+            <input id="email" name="email" type="email" />
+          </div>
+          <div class="form-group">
+            <label for="note">Hinweise zur Bestellung</label>
+            <textarea id="note" name="note" rows="3"></textarea>
+          </div>
+          <button type="submit" class="submit-order">Bestellung abschicken</button>
+          <p id="order-status" class="order-status"></p>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    let cart = [];
+
+    function loadCart() {
+      try {
+        cart = JSON.parse(localStorage.getItem("cart") || "[]") || [];
+      } catch {
+        cart = [];
+      }
+      cart = cart.map((item) => ({
+        ...item,
+        qty: typeof item.qty === "number" && item.qty > 0 ? item.qty : 1,
+      }));
+    }
+
+    function saveCart() {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function renderCheckout() {
+      const list = document.getElementById("checkout-items");
+      const sumEl = document.getElementById("checkout-sum");
+      if (!list || !sumEl) return;
+
+      list.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item) => {
+        const qty = item.qty;
+        const lineTotal = item.price * qty;
+        total += lineTotal;
+
+        const li = document.createElement("li");
+        li.className = "checkout-item";
+        li.innerHTML = `
+          <span>${qty}x ${item.name}</span>
+          <span>${lineTotal.toFixed(2)} €</span>
+        `;
+        list.appendChild(li);
+      });
+
+      sumEl.textContent = total.toFixed(2) + " €";
+    }
+
+    // NÚT XÓA TOÀN BỘ GIỎ HÀNG
+    document.getElementById("clear-cart")?.addEventListener("click", () => {
+      if (cart.length === 0) {
+        alert("Der Warenkorb ist leer!");
+        return;
+      }
+
+      if (confirm("Warenkorb vollständig löschen?")) {
+        cart = [];
+        localStorage.setItem("cart", JSON.stringify(cart)); // lưu giỏ rỗng
+        renderCheckout();                                   // cập nhật giao diện ngay
+
+        // Trigger StorageEvent thủ công để các tab khác/counter lắng nghe
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "cart",
+            newValue: JSON.stringify(cart),
+            storageArea: localStorage,
+          })
+        );
+
+        alert("Der Warenkorb wurde vollständig geleert!");
+      }
+    });
+
+    function setupOrderForm() {
+      const form = document.getElementById("order-form");
+      const statusEl = document.getElementById("order-status");
+      if (!form || !statusEl) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (cart.length === 0) {
+          statusEl.textContent = "Warenkorb ist leer.";
+          statusEl.className = "order-status error";
+          return;
+        }
+
+        const fd = new FormData(form);
+        const order = {
+          customer: {
+            name: fd.get("name"),
+            phone: fd.get("phone"),
+            email: fd.get("email"),
+            note: fd.get("note"),
+          },
+          items: cart,
+        };
+
+        statusEl.textContent = "Bestellung wird gesendet...";
+        statusEl.className = "order-status";
+
+        try {
+          const res = await fetch("/order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(order),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            console.error("Order error:", data);
+            statusEl.textContent = "Fehler beim Senden.";
+            statusEl.className = "order-status error";
+            return;
+          }
+
+          // THÀNH CÔNG → XÓA GIỎ HÀNG + CẬP NHẬT NGAY CHO TẤT CẢ TAB
+          statusEl.textContent =
+            "Bestellung erfolgreich gesendet! Vielen Dank.";
+          statusEl.className = "order-status success";
+
+          cart = [];        // xóa biến trong bộ nhớ
+          renderCheckout(); // cập nhật giao diện checkout ngay
+
+          // 3 dòng này làm số trên icon giỏ về 0 + sync tab
+          localStorage.setItem("cart", "[]");
+          window.dispatchEvent(
+            new StorageEvent("storage", {
+              key: "cart",
+              newValue: "[]",
+              storageArea: localStorage,
+            })
+          );
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent =
+            "Netzwerkfehler. Bitte später erneut versuchen.";
+          statusEl.className = "order-status error";
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadCart();
+      renderCheckout();
+      setupOrderForm();
+    });
+  </script>
+
+  <style>
+    .checkout-page { min-height: 100vh; background: #020617; padding: 2rem 1rem; }
+    .checkout-wrapper { max-width: 900px; margin: 0 auto; display: grid; gap: 1.5rem; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 768px) { .checkout-wrapper { grid-template-columns: 1fr; } }
+    .checkout-card { background: #0f172a; padding: 1.5rem; border-radius: 16px; border: 1px solid #1e293b; }
+    .checkout-card h2 { margin: 0 0 0.5rem; color: #f9fafb; }
+
+    /* NÚT XÓA NẰM NGANG VỚI WARENKORB */
+    .checkout-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .clear-cart-inline-btn {
+      background: transparent;
+      color: #fca5a5;
+      border: 1px solid #fca5a5;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clear-cart-inline-btn:hover {
+      background: #fca5a5;
+      color: #111;
+    }
+
+    .sub { margin: 0 0 1rem; font-size: 0.85rem; color: #94a3b8; }
+    .checkout-list { list-style: none; padding: 0; margin: 0 0 1rem; }
+    .checkout-item { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #1e293b; font-size: 0.9rem; color: #e2e8f0; }
+    .checkout-total { display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 0.7rem; border-top: 1px solid #334155; font-weight: 600; font-size: 1rem; color: #f9fafb; }
+    .order-form { display: flex; flex-direction: column; gap: 0.8rem; }
+    .form-group label { color: #e2e8f0; font-size: 0.85rem; }
+    .form-group input, .form-group textarea { width: 100%; background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 0.45rem 0.6rem; color: #f1f5f9; }
+    .submit-order { background: #22c55e; color: #062a1f; padding: 0.6rem 1.2rem; border: none; border-radius: 999px; font-weight: 600; cursor: pointer; }
+    .submit-order:hover { filter: brightness(1.05); }
+    .order-status { min-height: 1rem; font-size: 0.85rem; margin-top: 0.3rem; }
+    .order-status.error { color: #fca5a5; }
+    .order-status.success { color: #86efac; }
+  </style>
+</Layout>

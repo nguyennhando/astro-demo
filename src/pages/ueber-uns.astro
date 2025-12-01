@@ -1,0 +1,63 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { sanityClient } from "../lib/sanityClient";
+import { toHTML } from "@portabletext/to-html";
+
+const query = `
+  *[_type == "seite" && key == "ueber-uns"][0]{
+    titel,
+    inhalt
+  }
+`;
+
+const seite = await sanityClient.fetch(query);
+
+// Portable Text → HTML
+const html = seite?.inhalt ? toHTML(seite.inhalt) : "";
+---
+
+<Layout title={seite?.titel ?? "Über uns"}>
+  <h1>{seite?.titel ?? "Über uns"}</h1>
+
+  <!-- Dynamischer Inhalt aus Sanity -->
+  <div set:html={html}></div>
+
+  <!-- Bild vom Sushi Restaurant -->
+<img 
+  src="/images/sushi-gem.png" 
+  alt="Sushi Restaurant GEM"
+  style="width: 100%; max-width: 800px; border-radius: 12px; margin: 20px 0;"
+/>
+
+  <!-- Fester Text: Sushi-Restaurant GEM (Deutsch) -->
+  <section class="restaurant-info">
+    <h2>Sushi Restaurant GEM</h2>
+
+    <p>
+      Willkommen im <strong>Sushi Restaurant GEM</strong>, Ihrem besonderen Ort
+      für frische, handwerklich zubereitete Sushi-Kreationen und eine moderne,
+      elegante Atmosphäre.
+    </p>
+
+    <p>
+      Unsere Küche verbindet traditionelle japanische Techniken mit einem
+      zeitgemäßen Geschmackserlebnis. Wir verwenden ausschließlich frische,
+      hochwertige Zutaten, damit jede Rolle, jedes Nigiri und jedes Sashimi
+      den echten Charakter der japanischen Küche widerspiegelt.
+    </p>
+
+    <ul>
+      <li><strong>Frische Premium-Zutaten</strong> – täglich ausgewählt und sorgfältig verarbeitet.</li>
+      <li><strong>Vielfältige Speisekarte</strong> – von Klassikern bis hin zu kreativen Special Rolls.</li>
+      <li><strong>Stilvolles Ambiente</strong> – ideal für Paare, Familien und geschäftliche Treffen.</li>
+      <li><strong>Aufmerksamer Service</strong> – wir kümmern uns um jedes Detail.</li>
+    </ul>
+
+    <p>
+      Bei GEM möchten wir jedem Gast ein authentisches und zugleich modernes Sushi-Erlebnis bieten.
+      Ein Ort, an dem Genuss, Qualität und Wohlfühlen im Mittelpunkt stehen.
+    </p>
+
+    <p><strong>GEM – Ihre feine Adresse für Sushi mit Stil.</strong></p>
+  </section>
+</Layout>

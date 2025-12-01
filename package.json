@@ -9,6 +9,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.16.0"
+    "@portabletext/to-html": "^4.0.1",
+    "@sanity/client": "^7.13.0",
+    "astro": "^5.16.0",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.10"
   }
 }

@@ -1,0 +1,85 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Bestellung zum Mitnehmen – Restaurant Sonnengarten">
+  <section class="card">
+    <h1>Bestellung zum Mitnehmen</h1>
+    <p>
+      Bestellen Sie Ihre Lieblingsgerichte vor und holen Sie sie zur gewünschten Uhrzeit im
+      Restaurant ab.
+    </p>
+
+    <form
+      action="https://formspree.io/f/IHRE_FORM_ID"
+      method="POST"
+      class="form"
+    >
+      <div class="field">
+        <label for="name">Name *</label>
+        <input id="name" name="name" required />
+      </div>
+
+      <div class="field">
+        <label for="phone">Telefon *</label>
+        <input id="phone" name="phone" required />
+      </div>
+
+      <div class="field">
+        <label for="pickup-time">Abholzeit *</label>
+        <input id="pickup-time" name="pickup_time" type="time" required />
+      </div>
+
+      <div class="field">
+        <label for="order">Bestellung *</label>
+        <textarea
+          id="order"
+          name="order"
+          rows="4"
+          placeholder="Bitte Gerichte, Anzahl und evtl. Sonderwünsche eintragen."
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary">Bestellung senden</button>
+    </form>
+  </section>
+
+  <style>
+    .form {
+      margin-top: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    input,
+    textarea {
+      padding: 0.5rem 0.7rem;
+      border-radius: 0.5rem;
+      border: 1px solid #d1d5db;
+      font: inherit;
+    }
+
+    .btn-primary {
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      background: #2563eb;
+      color: #f9fafb;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</Layout>

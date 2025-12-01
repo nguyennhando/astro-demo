@@ -1,0 +1,201 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Reservierung – Restaurant Sonnengarten">
+  <section class="card">
+    <h1>Reservierung</h1>
+    <p>
+      Bitte füllen Sie das Formular aus. Wir bestätigen Ihre Reservierung per E-Mail oder Telefon.
+    </p>
+
+    <form id="res-form" class="form">
+      <div class="field">
+        <label for="name">Name *</label>
+        <input id="name" name="name" required />
+      </div>
+
+      <div class="field">
+        <label for="email">E-Mail *</label>
+        <input id="email" name="email" type="email" required />
+      </div>
+
+      <div class="field">
+        <label for="phone">Telefon *</label>
+        <input id="phone" name="phone" required />
+      </div>
+
+      <div class="field">
+        <label for="date">Datum *</label>
+        <input id="date" name="date" type="date" required />
+      </div>
+
+      <div class="field">
+        <label for="time">Uhrzeit *</label>
+        <input id="time" name="time" type="time" required />
+      </div>
+
+      <div class="field">
+        <label for="persons">Anzahl Personen *</label>
+        <input
+          id="persons"
+          name="persons"
+          type="number"
+          min="1"
+          max="20"
+          required
+        />
+      </div>
+
+      <div class="field">
+        <label for="notes">Bemerkungen (Allergien, Anlass, etc.)</label>
+        <textarea id="notes" name="notes" rows="3"></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary">Reservierung senden</button>
+      <p id="res-status" class="status"></p>
+    </form>
+  </section>
+
+  <script>
+    const form = document.getElementById("res-form");
+    const statusEl = document.getElementById("res-status");
+
+    if (form) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!statusEl) return;
+
+        const fd = new FormData(form);
+
+        const reservation = {
+          name: fd.get("name"),
+          email: fd.get("email"),
+          phone: fd.get("phone"),
+          date: fd.get("date"),
+          time: fd.get("time"),
+          persons: Number(fd.get("persons") || 0),
+          notes: fd.get("notes"),
+        };
+
+        statusEl.textContent = "Reservierung wird gesendet...";
+        statusEl.className = "status";
+
+        try {
+          const res = await fetch("/reservierung", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reservation),
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data.ok) {
+            statusEl.textContent =
+              data.message || "Fehler beim Senden der Reservierung.";
+            statusEl.className = "status error";
+            return;
+          }
+
+          statusEl.textContent =
+            "Reservierung erfolgreich gesendet! Wir melden uns bei Ihnen.";
+          statusEl.className = "status success";
+
+          form.reset();
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = "Serverfehler bei der Reservierung.";
+          statusEl.className = "status error";
+        }
+      });
+    }
+  </script>
+
+  <style>
+    .card {
+      max-width: 640px;
+      margin: 2rem auto;
+      padding: 1.75rem 1.5rem;
+      border-radius: 1rem;
+      background: #0f172a;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .card h1 {
+      margin: 0 0 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .card p {
+      margin: 0 0 1rem;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+
+    .form {
+      margin-top: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+    }
+
+    input,
+    textarea {
+      padding: 0.5rem 0.7rem;
+      border-radius: 0.5rem;
+      border: 1px solid #1f2937;
+      font: inherit;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.5);
+    }
+
+    .btn-primary {
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      border: none;
+      background: #22c55e;
+      color: #022c22;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+    }
+
+    .status {
+      margin-top: 0.4rem;
+      font-size: 0.85rem;
+      min-height: 1.1em;
+    }
+
+    .status.success {
+      color: #86efac;
+    }
+
+    .status.error {
+      color: #fca5a5;
+    }
+  </style>
+</Layout>
