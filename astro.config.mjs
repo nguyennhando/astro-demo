@@ -1,5 +1,6 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
-export default defineConfig({});
+export default defineConfig({
+  output: 'static',        // THÊM DÒNG NÀY
+  site: 'https://astro-demo-xxxxx.vercel.app', // có cũng được, chưa cần chính xác
+});
